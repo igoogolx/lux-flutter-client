@@ -21,6 +21,7 @@ jobs:
           flutter-version: '3.10.6'
           channel: 'stable'
       - run: dart pub global activate flutter_distributor
+      - run: flutter pub get
       - run: dart run scripts/init.dart
       - run: flutter_distributor release --name windows-dev
 
