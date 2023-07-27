@@ -1,0 +1,31 @@
+name: Build
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - v*.*.*           # Push events to v1.0, v1.1, and v1.9 tags
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.6'
+          channel: 'stable'
+      - run: dart pub global activate flutter_distributor
+      - run: flutter_distributor release --name windows-dev
+
+      - name: GH Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: |
+            dist/**/*.exe
