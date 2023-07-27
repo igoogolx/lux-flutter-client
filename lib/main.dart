@@ -39,9 +39,10 @@ Future<void> initSystemTray(Function openDashboard, exit) async {
 
   // We first init the systray menu
   await systemTray.initSystemTray(
-    title: "system tray",
+    title: "Lux",
     iconPath: path,
   );
+  systemTray.setToolTip("Lux Flutter");
 
   // create context menu
   final Menu menu = Menu();
