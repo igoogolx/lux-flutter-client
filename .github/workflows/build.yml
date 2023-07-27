@@ -28,4 +28,4 @@ jobs:
         with:
           draft: true
           files: |
-            dist/**/*.exe
+            dist/0.1.0+1/*.exe
