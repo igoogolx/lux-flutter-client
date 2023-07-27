@@ -1,0 +1,13 @@
+# The value of AppId uniquely identifies this application.
+# Do not use the same AppId value in installers for other applications.
+# TODO: update
+app_id: 11111111-1111-1111-1111-111111111111
+publisher: igoogolx
+publisher_url: https://github.com/leanflutter/flutter_distributor
+display_name:  Lux_Flutter
+create_desktop_icon: true
+install_dir_name: '{autopf}\Lux_Flutter'
+script_template: setup.iss
+setup_icon_file: ..\..\assets\app_icon.ico
+locales:
+  - en
