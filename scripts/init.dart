@@ -6,6 +6,7 @@ import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
 import 'package:lux/const/const.dart';
 
+
 final dio = Dio();
 
 // https://github.com/dart-lang/sdk/issues/31610
@@ -13,11 +14,15 @@ final assetsPath = path.normalize(path.join(Platform.script.toFilePath(), '../..
 final binDir = Directory(path.join(assetsPath, 'bin'));
 
 const rawCoreName ='itun2socks';
-const rawCoreVersion ='0.4.2';
+const rawCoreVersion ='0.4.4';
 
 
 Future downloadLatestCore() async {
-  final String luxCoreName = '${rawCoreName}_${rawCoreVersion}_${LuxCoreName.platform}_${LuxCoreName.arch}';
+  var releaseArch = LuxCoreName.arch;
+  if (LuxCoreName.platform=='darwin'){
+    releaseArch='all';
+  }
+  final String luxCoreName = '${rawCoreName}_${rawCoreVersion}_${LuxCoreName.platform}_$releaseArch';
   print(luxCoreName);
 
   final info = await dio.get('https://api.github.com/repos/igoogolx/itun2socks/releases/tags/v$rawCoreVersion');

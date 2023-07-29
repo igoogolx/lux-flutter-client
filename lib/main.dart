@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:system_tray/system_tray.dart';
@@ -73,8 +74,9 @@ void exitApp() {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final port = await findAvailablePort(8000, 9000);
+  final Directory appDocumentsDir = await getApplicationSupportDirectory();
   process =
-  await Process.start(path.join(Paths.assetsBin.path, LuxCoreName.name), ['-check_elevated=false', '-port=$port']);
+  await Process.start(path.join(Paths.assetsBin.path, LuxCoreName.name), ['-home_dir=${appDocumentsDir.path}', '-port=$port']);
   final Uri url = Uri.parse('http://localhost:$port');
   process?.stdout.transform(utf8.decoder).forEach(debugPrint);
 
