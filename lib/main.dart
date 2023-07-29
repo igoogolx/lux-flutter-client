@@ -33,13 +33,12 @@ Future<int> findAvailablePort(int startPort, int endPort) async {
 
 Future<void> initSystemTray(Function openDashboard, exit) async {
   String path =
-  Platform.isWindows ? 'assets/app_icon.ico' : 'assets/app_icon.png';
+  Platform.isWindows ? 'assets/app_icon.ico' : 'assets/tray.png';
 
   final SystemTray systemTray = SystemTray();
 
   // We first init the systray menu
   await systemTray.initSystemTray(
-    title: "Lux",
     iconPath: path,
   );
   systemTray.setToolTip("Lux Flutter");
@@ -75,7 +74,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final port = await findAvailablePort(8000, 9000);
   process =
-  await Process.start(path.join(Paths.assetsBin.path,'lux-core.exe'), ['-check_elevated=false', '-port=$port']);
+  await Process.start(path.join(Paths.assetsBin.path, LuxCoreName.name), ['-check_elevated=false', '-port=$port']);
   final Uri url = Uri.parse('http://localhost:$port');
   process?.stdout.transform(utf8.decoder).forEach(debugPrint);
 

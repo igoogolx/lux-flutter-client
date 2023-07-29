@@ -19,7 +19,7 @@ class LuxCoreName {
   }
 
   static String get name {
-    return 'lux-$platform-$arch$ext';
+    return 'lux-core$ext';
   }
 }
 

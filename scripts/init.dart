@@ -15,7 +15,6 @@ final binDir = Directory(path.join(assetsPath, 'bin'));
 const rawCoreName ='itun2socks';
 const rawCoreVersion ='0.4.2';
 
-const coreName ='lux-core';
 
 Future downloadLatestCore() async {
   final String luxCoreName = '${rawCoreName}_${rawCoreVersion}_${LuxCoreName.platform}_${LuxCoreName.arch}';
@@ -33,20 +32,24 @@ Future downloadLatestCore() async {
 
   print('Unarchiving $name');
   final tempBetys = await tempFile.readAsBytes();
-  if (name.contains('.gz')) {
-    final bytes = GZipDecoder().decodeBytes(tempBetys);
-    final String filePath = path.join(binDir.path, luxCoreName);
-    await File(filePath).writeAsBytes(bytes);
+  if (name.contains('.tar.gz')) {
+    final tarBytes = GZipDecoder().decodeBytes(tempBetys);
+    final file = TarDecoder().decodeBytes(tarBytes).findFile('$rawCoreName${LuxCoreName.ext}');
+    final String filePath = path.join(binDir.path, LuxCoreName.name);
+    if(file==null){
+      throw Exception("No Fount");
+    }
+    await File(path.join(binDir.path, LuxCoreName.name)).writeAsBytes(file.content);
     await Process.run('chmod', ['+x', filePath]);
   } else {
     final file = ZipDecoder().decodeBytes(tempBetys).findFile('$rawCoreName${LuxCoreName.ext}');
     if(file==null){
       throw Exception("No Fount");
     }
-    await File(path.join(binDir.path, '$coreName${LuxCoreName.ext}')).writeAsBytes(file.content);
+    await File(path.join(binDir.path, LuxCoreName.name)).writeAsBytes(file.content);
   }
   await tempFile.delete();
-  print('Unarchiv Success');
+  print('Unarchive Success');
 }
 
 
