@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:system_tray/system_tray.dart';
 import 'package:lux/const/const.dart';
 import 'package:path/path.dart' as path;
+import 'package:desktop_webview_window/desktop_webview_window.dart';
 
 Process? process;
 
@@ -22,7 +23,7 @@ Future<int> findAvailablePort(int startPort, int endPort) async {
   for (int port = startPort; port <= endPort; port++) {
     try {
       final serverSocket =
-      await ServerSocket.bind(InternetAddress.anyIPv4, port);
+          await ServerSocket.bind(InternetAddress.anyIPv4, port);
       await serverSocket.close();
       return port;
     } catch (e) {
@@ -33,8 +34,7 @@ Future<int> findAvailablePort(int startPort, int endPort) async {
 }
 
 Future<void> initSystemTray(Function openDashboard, exit) async {
-  String path =
-  Platform.isWindows ? 'assets/app_icon.ico' : 'assets/tray.png';
+  String path = Platform.isWindows ? 'assets/app_icon.ico' : 'assets/tray.png';
 
   final SystemTray systemTray = SystemTray();
 
@@ -71,18 +71,32 @@ void exitApp() {
   exit(0);
 }
 
-void main() async {
+void main(args) async {
   WidgetsFlutterBinding.ensureInitialized();
   final port = await findAvailablePort(8000, 9000);
   final Directory appDocumentsDir = await getApplicationSupportDirectory();
-  process =
-  await Process.start(path.join(Paths.assetsBin.path, LuxCoreName.name), ['-home_dir=${appDocumentsDir.path}', '-port=$port']);
-  final Uri url = Uri.parse('http://localhost:$port');
+  process = await Process.start(
+      path.join(Paths.assetsBin.path, LuxCoreName.name),
+      ['-home_dir=${appDocumentsDir.path}', '-port=$port']);
+  final urlStr = 'http://localhost:$port';
+  final Uri url = Uri.parse(urlStr);
   process?.stdout.transform(utf8.decoder).forEach(debugPrint);
 
-  void openDashboard(){
-    launchUrl(url);
+  void openDashboard() async {
+    final isWebviewAvailable = await WebviewWindow.isWebviewAvailable();
+    if (isWebviewAvailable) {
+      // Add this your main method.
+      // used to show a webview title bar.
+      if (runWebViewTitleBarWidget(args)) {
+        return;
+      }
+      final webview = await WebviewWindow.create();
+      webview.launch(urlStr);
+    } else {
+      launchUrl(url);
+    }
   }
+
   openDashboard();
   initSystemTray(openDashboard, exitApp);
   ProcessSignal.sigint.watch().listen((signal) {
