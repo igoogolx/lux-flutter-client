@@ -42,6 +42,7 @@ dependencies:
   archive: ^3.3.7
   path_provider: ^2.0.15
   desktop_webview_window: ^0.2.0
+  window_manager: ^0.3.5
 
 dev_dependencies:
   flutter_test:
