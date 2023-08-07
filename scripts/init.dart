@@ -14,7 +14,7 @@ final assetsPath = path.normalize(path.join(Platform.script.toFilePath(), '../..
 final binDir = Directory(path.join(assetsPath, 'bin'));
 
 const rawCoreName ='itun2socks';
-const rawCoreVersion ='0.4.5';
+const rawCoreVersion ='0.4.6';
 
 
 Future downloadLatestCore() async {
