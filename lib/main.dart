@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:system_tray/system_tray.dart';
 import 'package:lux/const/const.dart';
 import 'package:path/path.dart' as path;
+import 'package:package_info_plus/package_info_plus.dart';
 
 Process? process;
 
@@ -21,8 +22,7 @@ Future<void> copyAssetToFile(String assetPath, String filePath) async {
 Future<int> findAvailablePort(int startPort, int endPort) async {
   for (int port = startPort; port <= endPort; port++) {
     try {
-      final serverSocket =
-          await ServerSocket.bind("127.0.0.1", port);
+      final serverSocket = await ServerSocket.bind("127.0.0.1", port);
       await serverSocket.close();
       return port;
     } catch (e) {
@@ -72,11 +72,14 @@ void exitApp() {
 
 void main(args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
   final port = await findAvailablePort(8000, 9000);
   final Directory appDocumentsDir = await getApplicationSupportDirectory();
+  String version = packageInfo.version;
+  final homeDir = path.join(appDocumentsDir.path, version);
   process = await Process.start(
       path.join(Paths.assetsBin.path, LuxCoreName.name),
-      ['-home_dir=${appDocumentsDir.path}', '-port=$port']);
+      ['-home_dir=$homeDir', '-port=$port']);
   final urlStr = 'http://localhost:$port';
   final Uri url = Uri.parse(urlStr);
   process?.stdout.transform(utf8.decoder).forEach(debugPrint);
