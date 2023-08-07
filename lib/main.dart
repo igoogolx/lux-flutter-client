@@ -23,7 +23,7 @@ Future<int> findAvailablePort(int startPort, int endPort) async {
   for (int port = startPort; port <= endPort; port++) {
     try {
       final serverSocket =
-          await ServerSocket.bind(InternetAddress.anyIPv4, port);
+          await ServerSocket.bind("127.0.0.1", port);
       await serverSocket.close();
       return port;
     } catch (e) {
