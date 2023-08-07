@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:system_tray/system_tray.dart';
 import 'package:lux/const/const.dart';
 import 'package:path/path.dart' as path;
-import 'package:desktop_webview_window/desktop_webview_window.dart';
 
 Process? process;
 
@@ -83,18 +82,7 @@ void main(args) async {
   process?.stdout.transform(utf8.decoder).forEach(debugPrint);
 
   void openDashboard() async {
-    final isWebviewAvailable = await WebviewWindow.isWebviewAvailable();
-    if (isWebviewAvailable) {
-      // Add this your main method.
-      // used to show a webview title bar.
-      if (runWebViewTitleBarWidget(args)) {
-        return;
-      }
-      final webview = await WebviewWindow.create();
-      webview.launch(urlStr);
-    } else {
-      launchUrl(url);
-    }
+    launchUrl(url);
   }
 
   openDashboard();
