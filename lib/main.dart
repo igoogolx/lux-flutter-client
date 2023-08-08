@@ -32,7 +32,7 @@ Future<int> findAvailablePort(int startPort, int endPort) async {
   throw Exception('No available port found in range $startPort-$endPort');
 }
 
-Future<void> initSystemTray(Function openDashboard, exit) async {
+Future<void> initSystemTray() async {
   String path = Platform.isWindows ? 'assets/app_icon.ico' : 'assets/tray.png';
 
   final SystemTray systemTray = SystemTray();
@@ -47,8 +47,8 @@ Future<void> initSystemTray(Function openDashboard, exit) async {
   final Menu menu = Menu();
   await menu.buildFrom([
     MenuItemLabel(label: 'Lux', enabled: false),
-    MenuItemLabel(label: 'Show', onClicked: (menuItem) => openDashboard()),
-    MenuItemLabel(label: 'Exit', onClicked: (menuItem) => exit()),
+    MenuItemLabel(label: 'Show', onClicked: (menuItem) => {}),
+    MenuItemLabel(label: 'Exit', onClicked: (menuItem) => exitApp()),
   ]);
 
   // set context menu
@@ -70,6 +70,14 @@ void exitApp() {
   exit(0);
 }
 
+
+var urlStr = '';
+
+void openDashboard() async {
+  final Uri url = Uri.parse(urlStr);
+  launchUrl(url);
+}
+
 void main(args) async {
   WidgetsFlutterBinding.ensureInitialized();
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -80,16 +88,11 @@ void main(args) async {
   process = await Process.start(
       path.join(Paths.assetsBin.path, LuxCoreName.name),
       ['-home_dir=$homeDir', '-port=$port']);
-  final urlStr = 'http://localhost:$port';
-  final Uri url = Uri.parse(urlStr);
+  urlStr = 'http://localhost:$port';
   process?.stdout.transform(utf8.decoder).forEach(debugPrint);
 
-  void openDashboard() async {
-    launchUrl(url);
-  }
-
   openDashboard();
-  initSystemTray(openDashboard, exitApp);
+  initSystemTray();
   ProcessSignal.sigint.watch().listen((signal) {
     // Run your function here before exiting
     process?.kill();
