@@ -47,7 +47,7 @@ Future<void> initSystemTray() async {
   final Menu menu = Menu();
   await menu.buildFrom([
     MenuItemLabel(label: 'Lux', enabled: false),
-    MenuItemLabel(label: 'Show', onClicked: (menuItem) => {}),
+    MenuItemLabel(label: 'Dashboard', onClicked: (menuItem) => openDashboard()),
     MenuItemLabel(label: 'Exit', onClicked: (menuItem) => exitApp()),
   ]);
 
