@@ -8,6 +8,7 @@ import 'package:system_tray/system_tray.dart';
 import 'package:lux/const/const.dart';
 import 'package:path/path.dart' as path;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:window_manager/window_manager.dart';
 
 Process? process;
 
@@ -80,6 +81,7 @@ void openDashboard() async {
 
 void main(args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   final port = await findAvailablePort(8000, 9000);
   final Directory appDocumentsDir = await getApplicationSupportDirectory();
@@ -91,11 +93,26 @@ void main(args) async {
   urlStr = 'http://localhost:$port';
   process?.stdout.transform(utf8.decoder).forEach(debugPrint);
 
+  openDashboard();
   initSystemTray();
   ProcessSignal.sigint.watch().listen((signal) {
     // Run your function here before exiting
     process?.kill();
   });
+
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(800, 600),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.hide();
+  });
+
   runApp(const MyApp());
 }
 
