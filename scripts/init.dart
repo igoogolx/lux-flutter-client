@@ -36,9 +36,9 @@ Future downloadLatestCore() async {
   print('Download Success');
 
   print('Unarchiving $name');
-  final tempBetys = await tempFile.readAsBytes();
+  final tempBytes = await tempFile.readAsBytes();
   if (name.contains('.tar.gz')) {
-    final tarBytes = GZipDecoder().decodeBytes(tempBetys);
+    final tarBytes = GZipDecoder().decodeBytes(tempBytes);
     final file = TarDecoder().decodeBytes(tarBytes).findFile('$rawCoreName${LuxCoreName.ext}');
     final String filePath = path.join(binDir.path, LuxCoreName.name);
     if(file==null){
@@ -47,7 +47,7 @@ Future downloadLatestCore() async {
     await File(path.join(binDir.path, LuxCoreName.name)).writeAsBytes(file.content);
     await Process.run('chmod', ['+x', filePath]);
   } else {
-    final file = ZipDecoder().decodeBytes(tempBetys).findFile('$rawCoreName${LuxCoreName.ext}');
+    final file = ZipDecoder().decodeBytes(tempBytes).findFile('$rawCoreName${LuxCoreName.ext}');
     if(file==null){
       throw Exception("No Found");
     }
