@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:lux/process_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
@@ -10,15 +9,7 @@ import 'package:path/path.dart' as path;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
-Process? process;
-
-Future<void> copyAssetToFile(String assetPath, String filePath) async {
-  final byteData = await rootBundle.load(assetPath);
-  final bytes = byteData.buffer.asUint8List();
-
-  // Write the file to disk
-  await File(filePath).writeAsBytes(bytes);
-}
+ProcessManager? process;
 
 Future<int> findAvailablePort(int startPort, int endPort) async {
   for (int port = startPort; port <= endPort; port++) {
@@ -32,6 +23,11 @@ Future<int> findAvailablePort(int startPort, int endPort) async {
   }
   throw Exception('No available port found in range $startPort-$endPort');
 }
+
+void handleExit(){
+  process?.exit();
+}
+
 
 Future<void> initSystemTray() async {
   String path = Platform.isWindows ? 'assets/app_icon.ico' : 'assets/tray.png';
@@ -67,7 +63,7 @@ Future<void> initSystemTray() async {
 }
 
 void exitApp() {
-  process?.kill();
+  process?.exit();
   exit(0);
 }
 
@@ -87,19 +83,12 @@ void main(args) async {
   final Directory appDocumentsDir = await getApplicationSupportDirectory();
   String version = packageInfo.version;
   final homeDir = path.join(appDocumentsDir.path, version);
-  process = await Process.start(
-      path.join(Paths.assetsBin.path, LuxCoreName.name),
-      ['-home_dir=$homeDir', '-port=$port']);
+  process = ProcessManager(path.join(Paths.assetsBin.path, LuxCoreName.name),  ['-home_dir=$homeDir', '-port=$port']);
+  process?.run();
+  process?.watchExit();
   urlStr = 'http://localhost:$port';
-  process?.stdout.transform(utf8.decoder).forEach(debugPrint);
-
   openDashboard();
   initSystemTray();
-  ProcessSignal.sigint.watch().listen((signal) {
-    // Run your function here before exiting
-    process?.kill();
-  });
-
   WindowOptions windowOptions = const WindowOptions(
     size: Size(800, 600),
     center: true,
