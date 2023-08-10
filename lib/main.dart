@@ -24,11 +24,6 @@ Future<int> findAvailablePort(int startPort, int endPort) async {
   throw Exception('No available port found in range $startPort-$endPort');
 }
 
-void handleExit(){
-  process?.exit();
-}
-
-
 Future<void> initSystemTray() async {
   String path = Platform.isWindows ? 'assets/app_icon.ico' : 'assets/tray.png';
 
