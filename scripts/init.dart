@@ -42,14 +42,14 @@ Future downloadLatestCore() async {
     final file = TarDecoder().decodeBytes(tarBytes).findFile('$rawCoreName${LuxCoreName.ext}');
     final String filePath = path.join(binDir.path, LuxCoreName.name);
     if(file==null){
-      throw Exception("No Fount");
+      throw Exception("No Found");
     }
     await File(path.join(binDir.path, LuxCoreName.name)).writeAsBytes(file.content);
     await Process.run('chmod', ['+x', filePath]);
   } else {
     final file = ZipDecoder().decodeBytes(tempBetys).findFile('$rawCoreName${LuxCoreName.ext}');
     if(file==null){
-      throw Exception("No Fount");
+      throw Exception("No Found");
     }
     await File(path.join(binDir.path, LuxCoreName.name)).writeAsBytes(file.content);
   }
