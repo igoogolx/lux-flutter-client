@@ -22,7 +22,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm install -g appdmg
+      - if: matrix.os == 'macos-latest'
+        run: npm install -g appdmg
       - run: dart pub global activate flutter_distributor
       - run: flutter pub get
       - run: dart run scripts/init.dart
