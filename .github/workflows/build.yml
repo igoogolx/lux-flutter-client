@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -29,9 +28,31 @@ jobs:
       - run: dart run scripts/init.dart
       - run: flutter_distributor release --name ${{ matrix.os }}
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifact
+          path: dist/*/*
+
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: dist
+
+      - name: Generate checksum
+        uses: jmgilman/actions-generate-checksum@v1
+        with:
+          patterns: |
+            dist/*/*
+
       - name: GH Release
         uses: softprops/action-gh-release@v1
         with:
           draft: true
           files: |
+            checksum.txt
             dist/*/*
