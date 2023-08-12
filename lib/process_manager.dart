@@ -11,7 +11,7 @@ class ProcessManager {
 
   ProcessManager(this.path, this.args);
 
-  void run() async {
+  Future<void> run() async {
     process = await Process.start(path, args);
     process?.stdout.transform(utf8.decoder).forEach(debugPrint);
   }

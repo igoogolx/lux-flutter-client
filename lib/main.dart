@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lux/core_manager.dart';
 import 'package:lux/process_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -79,9 +80,11 @@ void main(args) async {
   String version = packageInfo.version;
   final homeDir = path.join(appDocumentsDir.path, version);
   process = ProcessManager(path.join(Paths.assetsBin.path, LuxCoreName.name),  ['-home_dir=$homeDir', '-port=$port']);
-  process?.run();
+  await process?.run();
   process?.watchExit();
   urlStr = 'http://localhost:$port';
+  final manager = CoreManager(urlStr);
+  await manager.ping();
   openDashboard();
   initSystemTray();
   WindowOptions windowOptions = const WindowOptions(
