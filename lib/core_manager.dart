@@ -20,5 +20,8 @@ class CoreManager {
     dio.transformer = BackgroundTransformer()..jsonDecodeCallback = parseJson;
   }
 
-  void run() async {}
+  void ping() async {
+    Response response;
+    response = await dio.get('$baseUrl/ping');
+  }
 }
