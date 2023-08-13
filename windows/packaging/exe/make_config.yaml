@@ -6,7 +6,7 @@ publisher: igoogolx
 publisher_url: https://github.com/leanflutter/flutter_distributor
 display_name:  Lux
 create_desktop_icon: true
-install_dir_name: '{autopf}\Lux'
+install_dir_name: '{autopf}\lux'
 script_template: setup.iss
 setup_icon_file: ..\..\assets\app_icon.ico
 locales:
